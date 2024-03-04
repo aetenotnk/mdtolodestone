@@ -42,7 +42,7 @@ class MDTLS{
             }
 
             while(linkParser.test(l)){
-                l = linkParser.tag_begin(l) + linkParser.text(l) + linkParser.tag_end(l) + newLine;
+                l = linkParser.tag_begin(l) + linkParser.text(l) + linkParser.tag_end(l);
             }
 
             if(!tagFlag){
@@ -219,4 +219,8 @@ class LinkParser extends MDTLSParser{
 
         return match[2];
     }
+}
+
+class HiddenParser extends MDTLSParser{
+
 }
