@@ -30,10 +30,12 @@ class MDTLS{
                 l = strikethroughParser.text(l);
             }
 
-            res += l;
-
             if(!tagFlag){
+                res += l + newLine;
                 NumListParser.clearCounter();
+            }
+            else{
+                res += l;
             }
         });
 
