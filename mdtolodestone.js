@@ -4,6 +4,7 @@ class MDTLS{
             hParser = new HParser(),
             listParser = new ListParser(),
             numListParser = new NumListParser(),
+            strikethroughParser = new StrikethroughParser(),
             newLine = "\r\n",
             res = "";
 
@@ -11,22 +12,27 @@ class MDTLS{
             var tagFlag = false;
 
             if(hParser.test(l)){
-                res += hParser.tag_begin(l) + hParser.text(l) + hParser.tag_end(l) + newLine;
+                l = hParser.tag_begin(l) + hParser.text(l) + hParser.tag_end(l) + newLine;
                 tagFlag = true;
                 NumListParser.clearCounter();
             }
             if(listParser.test(l)){
-                res += listParser.tag_begin(l) + listParser.text(l) + listParser.tag_end(l) + newLine;
+                l = listParser.tag_begin(l) + listParser.text(l) + listParser.tag_end(l) + newLine;
                 tagFlag = true;
                 NumListParser.clearCounter();
             }
             if(numListParser.test(l)){
-                res += numListParser.tag_begin(l) + numListParser.text(l) + numListParser.tag_end(l) + newLine;
+                l = numListParser.tag_begin(l) + numListParser.text(l) + numListParser.tag_end(l) + newLine;
                 tagFlag = true;
             }
 
+            while(strikethroughParser.test(l)){
+                l = strikethroughParser.text(l);
+            }
+
+            res += l;
+
             if(!tagFlag){
-                res += l + "\r\n";
                 NumListParser.clearCounter();
             }
         });
@@ -138,5 +144,18 @@ class NumListParser extends MDTLSParser{
 
     static clearCounter(){
         NumListParser.counter = [];
+    }
+}
+
+class StrikethroughParser extends MDTLSParser{
+    constructor(){
+        super("s", /~~(.*?)~~/);
+    }
+
+    text(line){
+        var match = line.match(this.regex),
+            convertedText = this.tag_begin(line) + match[1] + this.tag_end(line);
+
+        return line.replace(this.regex, convertedText);
     }
 }
