@@ -5,6 +5,7 @@ class MDTLS{
             listParser = new ListParser(),
             numListParser = new NumListParser(),
             strikethroughParser = new StrikethroughParser(),
+            boldParser = new BoldParser(),
             newLine = "\r\n",
             res = "";
 
@@ -28,6 +29,10 @@ class MDTLS{
 
             while(strikethroughParser.test(l)){
                 l = strikethroughParser.text(l);
+            }
+
+            while(boldParser.test(l)){
+                l = boldParser.text(l);
             }
 
             if(!tagFlag){
@@ -152,6 +157,19 @@ class NumListParser extends MDTLSParser{
 class StrikethroughParser extends MDTLSParser{
     constructor(){
         super("s", /~~(.*?)~~/);
+    }
+
+    text(line){
+        var match = line.match(this.regex),
+            convertedText = this.tag_begin(line) + match[1] + this.tag_end(line);
+
+        return line.replace(this.regex, convertedText);
+    }
+}
+
+class BoldParser extends MDTLSParser{
+    constructor(){
+        super("b", /\*\*(.*?)\*\*/);
     }
 
     text(line){
