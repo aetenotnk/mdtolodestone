@@ -7,6 +7,19 @@
                 height: 500px;
             }
         </style>
+
+        <script src="mdtolodestone.js"></script>
+        <script>
+            window.onload = (e => {
+                document.getElementById("convert").addEventListener("click", e => {
+                    var md = document.getElementById("md").value;
+
+                    console.log(MDTLS.parse(md));
+
+                    document.getElementById("lodestone").textContent = MDTLS.parse(md);
+                });
+            })
+        </script>
     </head>
     <body>
         <textarea id="md"></textarea>
