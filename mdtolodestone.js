@@ -2,16 +2,23 @@ class MDTLS{
     static parse(text){
         var lines = text.split(/\r\n|\n/),
             hParser = new HParser(),
+            listParser = new ListParser(),
+            newLine = "\r\n",
             res = "";
 
         lines.forEach(l => {
-            var tag = "";
+            var tagFlag = false;
 
             if(hParser.test(l)){
-                res += hParser.tag_begin(l) + hParser.text(l) + hParser.tag_end(l) + "\r\n";
-                tag = hParser.tag_begin(l);
+                res += hParser.tag_begin(l) + hParser.text(l) + hParser.tag_end(l) + newLine;
+                tagFlag = true;
             }
-            if(tag == ""){
+            if(listParser.test(l)){
+                res += listParser.tag_begin(l) + listParser.text(l) + listParser.tag_end(l) + newLine;
+                tagFlag = true;
+            }
+
+            if(!tagFlag){
                 res += l + "\r\n";
             }
         });
@@ -31,6 +38,10 @@ class MDTLSParser{
     }
 
     tag_begin(line){
+        if(this.tag == ""){
+            return "";
+        }
+
         return `[${this.tag}]`;
     }
 
@@ -39,6 +50,10 @@ class MDTLSParser{
     }
 
     tag_end(line){
+        if(this.tag == ""){
+            return "";
+        }
+
         return `[/${this.tag}]`;
     }
 }
@@ -61,5 +76,22 @@ class HParser extends MDTLSParser{
         size = this.sizeList[sizeIndex];
 
         return `[${this.tag}=${size}]`;
+    }
+}
+
+class ListParser extends MDTLSParser{
+    constructor(){
+        super("", /^(    )*\* +/);
+    }
+
+    tag_begin(line){
+        var indent = line.match(this.regex)[0].indexOf("*") / 4,
+            begin = "";
+
+        for(var i = 0; i < indent; i++){
+            begin += "    ";
+        }
+
+        return begin + "・";
     }
 }
