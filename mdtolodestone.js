@@ -7,6 +7,7 @@ class MDTLS{
             strikethroughParser = new StrikethroughParser(),
             boldParser = new BoldParser(),
             italicParser = new ItalicParser(),
+            linkParser = new LinkParser(),
             newLine = "\r\n",
             res = "";
 
@@ -38,6 +39,10 @@ class MDTLS{
 
             while(italicParser.test(l)){
                 l = italicParser.text(l);
+            }
+
+            while(linkParser.test(l)){
+                l = linkParser.tag_begin(l) + linkParser.text(l) + linkParser.tag_end(l) + newLine;
             }
 
             if(!tagFlag){
@@ -195,5 +200,23 @@ class ItalicParser extends MDTLSParser{
             convertedText = this.tag_begin(line) + match[1] + this.tag_end(line);
 
         return line.replace(this.regex, convertedText);
+    }
+}
+
+class LinkParser extends MDTLSParser{
+    constructor(){
+        super("url", /^\[(.*)\]\((.*)\)/);
+    }
+
+    tag_begin(line){
+        var match = line.match(this.regex);
+
+        return `[${this.tag}=${match[1]}]`;
+    }
+
+    text(line){
+        var match = line.match(this.regex);
+
+        return match[2];
     }
 }
