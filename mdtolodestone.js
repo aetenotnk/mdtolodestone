@@ -13,10 +13,12 @@ class MDTLS{
             if(hParser.test(l)){
                 res += hParser.tag_begin(l) + hParser.text(l) + hParser.tag_end(l) + newLine;
                 tagFlag = true;
+                NumListParser.clearCounter();
             }
             if(listParser.test(l)){
                 res += listParser.tag_begin(l) + listParser.text(l) + listParser.tag_end(l) + newLine;
                 tagFlag = true;
+                NumListParser.clearCounter();
             }
             if(numListParser.test(l)){
                 res += numListParser.tag_begin(l) + numListParser.text(l) + numListParser.tag_end(l) + newLine;
