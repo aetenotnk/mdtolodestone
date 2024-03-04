@@ -3,6 +3,7 @@ class MDTLS{
         var lines = text.split(/\r\n|\n/),
             hParser = new HParser(),
             listParser = new ListParser(),
+            numListParser = new NumListParser(),
             newLine = "\r\n",
             res = "";
 
@@ -17,9 +18,14 @@ class MDTLS{
                 res += listParser.tag_begin(l) + listParser.text(l) + listParser.tag_end(l) + newLine;
                 tagFlag = true;
             }
+            if(numListParser.test(l)){
+                res += numListParser.tag_begin(l) + numListParser.text(l) + numListParser.tag_end(l) + newLine;
+                tagFlag = true;
+            }
 
             if(!tagFlag){
                 res += l + "\r\n";
+                NumListParser.clearCounter();
             }
         });
 
@@ -93,5 +99,42 @@ class ListParser extends MDTLSParser{
         }
 
         return begin + "・";
+    }
+}
+
+class NumListParser extends MDTLSParser{
+    static counter = [];
+
+    constructor(){
+        super("", /^(    )*[0-9]+\. +/);
+        NumListParser.counter = [];
+    }
+
+    tag_begin(line){
+        var indent = line.match(this.regex)[0].match(/[0-9]/).index / 4,
+            begin = "";
+
+        for(var i = 0; i < indent; i++){
+            begin += "    ";
+        }
+
+        if(NumListParser.counter[indent] == null){
+            NumListParser.counter[indent] = 1;
+        }
+        else{
+            NumListParser.counter[indent] += 1;
+        }
+
+        for(var i = indent + 1; i < NumListParser.counter.length; i++){
+            NumListParser.counter[i] = null;
+        }
+
+        begin += NumListParser.counter[indent] + ". ";
+
+        return begin;
+    }
+
+    static clearCounter(){
+        NumListParser.counter = [];
     }
 }
