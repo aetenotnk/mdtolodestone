@@ -6,6 +6,14 @@
                 width: 300px;
                 height: 500px;
             }
+            .left{
+                float: left;
+            }
+            button{
+                margin-top: 250px;
+                margin-left: 16px;
+                margin-right: 16px;
+            }
         </style>
 
         <script src="mdtolodestone.js"></script>
@@ -14,16 +22,20 @@
                 document.getElementById("convert").addEventListener("click", e => {
                     var md = document.getElementById("md").value;
 
-                    console.log(MDTLS.parse(md));
-
                     document.getElementById("lodestone").textContent = MDTLS.parse(md);
                 });
             })
         </script>
     </head>
     <body>
-        <textarea id="md"></textarea>
-        <button id="convert">変換！</button>
-        <textarea id="lodestone"></textarea>
+        <div class="left">
+            <h3>Markdown</h3>
+            <textarea id="md"></textarea>
+        </div>
+        <button id="convert" class="left">変換→</button>
+        <div class="left">
+            <h3>Loadestone</h3>
+            <textarea id="lodestone"></textarea>
+        </div>
     </body>
 </html>
